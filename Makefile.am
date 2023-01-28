@@ -11,6 +11,18 @@ bin_SCRIPTS = $(PERL_BINS)
 pcsc_DATA = smartcard_list.txt
 pcscdir = $(datarootdir)/pcsc
 
+edit = sed \
+	-e 's|@pcscdir[@]|$(pcscdir)|g'
+
+ATR_analysis: ATR_analysis.in
+	$(edit) $< > $@
+
+ATR_analysis.1p: ATR_analysis.1p.in
+	$(edit) $< > $@
+
+# Clean up the macro-edited files
+CLEANFILES = ATR_analysis ATR_analysis.1p
+
 #  install the man pages
 man_MANS = pcsc_scan.1 $(PERL_MANPAGES)
 

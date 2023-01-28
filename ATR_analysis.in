@@ -56,7 +56,7 @@ if (exists($ENV{XDG_CACHE_HOME}))
 }
 
 # file containing the smart card models
-my @SMARTCARD_LIST = ( "$Cache/smartcard_list.txt", "$ENV{HOME}/.smartcard_list.txt", "/usr/local/pcsc/smartcard_list.txt", "/usr/share/pcsc/smartcard_list.txt", "/usr/local/share/pcsc/smartcard_list.txt");
+my @SMARTCARD_LIST = ( "$Cache/smartcard_list.txt", "$ENV{HOME}/.smartcard_list.txt", "@pcscdir@/smartcard_list.txt");
 
 our ($opt_v, $opt_h);
 my ($atr, %TS, @Fi, @FMax, @Di, @XI, @UI, $T, $value, $counter, $line, $TCK);
@@ -291,10 +291,10 @@ if ($found)
 
 ######## Sub functions
 
-#  _____  _    
-# |_   _|/ \   
-#   | | / _ \  
-#   | |/ ___ \ 
+#  _____  _
+# |_   _|/ \
+#   | | / _ \
+#   | |/ ___ \
 #   |_/_/   \_\
 #
 sub analyse_TA()
@@ -306,7 +306,7 @@ sub analyse_TA()
 
 	# TA1 Analysis
 	if ($counter == 1)
-	{ 
+	{
 		my $F = $value >> 4;
 		my $D = $value % 16;
 
@@ -320,13 +320,13 @@ sub analyse_TA()
 			printf ", fMax for Fi = %d MHz => %d bits/s", $FMax[$F], $FMax[$F]*1000000/$value;
 		}
 	}
-	
+
 	# TA2 Analysis - TA2 is the specific mode byte
 	if ($counter == 2)
-	{ 
+	{
 		my $F = $value >> 4;
 		my $D = $value % 16;
-		
+
 		printf ("Protocol to be used in spec mode: T=%s", $D);
 		if ($F & 0x8)
 		{
@@ -345,7 +345,7 @@ sub analyse_TA()
 		{
 			print " - defined by interface bytes";
 		}
-	}   
+	}
 
 	# TA3 Analysis
 	if ($counter >= 3)
@@ -366,17 +366,17 @@ sub analyse_TA()
 		    $Class = $Class."D RFU " if ($D & 0x8);
 		    $Class = $Class."E RFU" if ($D & 0x10);
 
-		    printf ("Clock stop: %s - Class accepted by the card: %s", $XI[$F],$Class); 
+		    printf ("Clock stop: %s - Class accepted by the card: %s", $XI[$F],$Class);
 	    }
 	}
 	print $COLOR_END;
 } # analyse_TA()
 
-#  _____ ____  
-# |_   _| __ ) 
-#   | | |  _ \ 
+#  _____ ____
+# |_   _| __ )
+#   | | |  _ \
 #   | | | |_) |
-#   |_| |____/ 
+#   |_| |____/
 #
 sub analyse_TB()
 {
@@ -419,17 +419,17 @@ sub analyse_TB()
 	    {
 		    my $BWI = $value >> 4;
 		    my $CWI = $value % 16;
-		    
+
 		    printf ("Block Waiting Integer: %s - Character Waiting Integer: %s", $BWI, $CWI);
 	    }
 	}
 	print $COLOR_END;
 } # analyse_TB()
 
-#  _____ ____ 
+#  _____ ____
 # |_   _/ ___|
-#   | || |    
-#   | || |___ 
+#   | || |
+#   | || |___
 #   |_| \____|
 #
 sub analyse_TC()
@@ -472,18 +472,18 @@ sub analyse_TC()
 	print $COLOR_END;
 } # analyse_TC()
 
-#  _____ ____  
-# |_   _|  _ \ 
+#  _____ ____
+# |_   _|  _ \
 #   | | | | | |
 #   | | | |_| |
-#   |_| |____/ 
+#   |_| |____/
 #
 sub analyse_TD()
 {
 	my $str = '';
 
 	$value = hex(shift(@object));
-	
+
 	my $Y = $value >> 4;
 	$T = $value % 16;
 
@@ -509,7 +509,7 @@ sub analyse_TD()
 	analyse_TD() if ($Y & 0x8);
 } # analyse_TD()
 
-# _____ _           _                     _ 
+# _____ _           _                     _
 #|  ___(_)_ __   __| |   ___ __ _ _ __ __| |
 #| |_  | | '_ \ / _` |  / __/ _` | '__/ _` |
 #|  _| | | | | | (_| | | (_| (_| | | | (_| |
@@ -609,7 +609,7 @@ sub analyse_historical_bytes()
 		};
 
 		/80/ && do
-		{ 
+		{
 			print " (compact TLV data object)\n";
 			compact_tlv() while (@object);
 			last;
@@ -745,7 +745,7 @@ sub compact_tlv()
 			print " (status indicator)\n";
 			for ($len)
 			{
-				/1/ && do 
+				/1/ && do
 				{
 					my $lcs = shift @object;
 					print "      LCS (life card cycle): $lcs\n";
@@ -919,4 +919,3 @@ sub cs($)
 		printf "        - Card with MF\n";
 	}
 } # cs
-
